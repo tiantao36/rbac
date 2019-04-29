@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>系统管理</title>
+    <link rel="icon" href="/static/img/logo-noword.png">
+    <link href="/static/css/bootstrap.css" rel="stylesheet" />
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <h5 class="page-header" >{{ status }}<mark style="color: #337ab7;background: #ffffff;"><a>跳回首页</a></mark></h5>
+</div>
+<script>
+    $(function () {
+        setInterval(function () {
+            window.location.href='/index/'
+        },3000)
+    })
+    $('a').click(function () {
+        $(this).attr('href','/index/')
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+{% load rbac %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>系统管理</title>
+    <link rel="icon" href="/static/img/logo-noword.png">
+    <link href="/static/bs/css/bootstrap.css" rel="stylesheet" />
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/jquery.cookie.js"></script>
+    <script src="/static/bs/js/bootstrap.js"></script>
+    <style>
+       @media screen and (max-width: 991px) {
+            .navbar-form{
+                display: none;
+            }
+        }
+        .titles1{
+            padding:0 10px 0px 10px;
+            display: inline-block;
+            width: 85px;
+            background: #F2F2F2;
+            border-right: 1px solid #e2e2e2;
+        }
+       .titles1-a{
+           padding:0 10px 0px 10px;
+           display: inline-block;
+           width: 85px;
+           background: #fff;
+           border-right: 1px solid #e2e2e2;
+       }
+       .titles2{
+            padding:0 10px 0px 10px;
+            display: inline-block;
+            width: 85px;
+            background: #fff;
+            border-right: 1px solid #e2e2e2;
+        }
+    </style>
+</head>
+<body>
+<!--导航--->
+<nav class="navbar navbar-inverse navbar-fixed-top" style="border-radius: 0px;">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">运维管理</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <form class="navbar-form navbar-left" style="margin-left: 400px">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="请输入">
+        </div>
+        <button type="submit" class="btn btn-default">搜索</button>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/index/">首页</a></li>
+        <li class="dropdown" style="margin-right: 30px">
+          <!--模态框-->
+          <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">系统管理 <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#"  data-toggle="modal" data-target="#myModal">修改密码</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="/logout/" class="logout">登出系统</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+<!--模态对话框--->
+<div class="modal fade" id="myModal" tabindex="-1" style="margin-top: 100px">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+      </div>
+      <div class="modal-body">
+           {% changepass_html request %}
+      </div>
+    </div>
+  </div>
+</div>
+<!--中间部分 通过定位实现固定位置-->
+<div class="container-fluid" style="width:100%;position: fixed;top:50px">
+    <div class="row">
+        <div class="left-menu" style="position: fixed;top: 51px;left: 0px;width: 180px;height: 586px;background: #1A1A1A">
+            {% menu_html request %}
+        </div>
+        <div class="right-menu" style="position: fixed;top: 51px;left: 180px;height: 586px;width:1186px;overflow: auto;overflow-x:hidden;">
+            <div class="container-fluid" style="padding: 0px">
+                    <div class="col-md-12" style="padding: 0px">
+                        <ul class="title-menu" style="width: 100%;position: fixed;height: 40px;line-height: 40px;list-style: none;padding: 0px;font-size: 14px;background: #F2F2F2;border-bottom: 1px solid #e2e2e2;z-index: 10">
+                            <li  style="padding: 0 10px 0px 10px;display: inline-block;width: 85px;background: #fff;border-right:1px solid #e2e2e2; ">集群管理</li>
+                        </ul>
+                        <div class="content-block" style="margin-top: 41px;">
+                            <div class="container-fluid"  style="padding: 0px;">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <!--内容区域 通过获取data-url发起ajax请求获取数据直接填充-->
+                                        <h1 class="page-header page-title" style="text-align:center;"></h1>
+                                        <div class="content-main">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--回到顶部-->
+<div class="backttop" style="position: fixed;right: 15px;bottom: 15px">
+    <img src="/static/img/top.png">
+</div>
+
+
+</body>
+<script>
+    $(function () {
+        $('.backttop').hide()
+        $('.right-menu').scroll(function () {
+            var st = $('.right-menu').scrollTop();
+            console.log(st)
+            if (st >= 300) {
+                $('.backttop').show()
+            } else {
+                $('.backttop').hide()
+            }
+        })
+        $('.backttop').on('click',function () {
+		    $('.right-menu').scrollTop(0)
+		    $('.backttop').hide()
+	    })
+
+
+
+        $('.leftmenutile').css({'background':''})
+        $('.leftmenutile').first().css({'background':'#0C0C0C'})
+        $('.leftmenutile').click(function () {
+            $(this).css({'background':'#0C0C0C'});
+            $('.leftmenutile').not($(this)).css({'background':''})
+        })
+        $('.leftmenutile').css({'background':''})
+        $('.leftmenutile').first().css({'background':'#0C0C0C'})
+
+
+
+        $('.menu-ul').on('click','.leftmenutile',function () {
+            $(this).css({'background':'#0C0C0C'});
+            $('.leftmenutile').not($(this)).css({'background':''})
+
+            var title_lenght=$(this).next().length
+            var title_leftmenutiles=$(this).hasClass('leftmenutiles')
+
+
+            /*
+              titles1-a控制白色。让二级菜单父菜单实现颜色变化
+             */
+
+            if(title_leftmenutiles && title_lenght){
+                $('.title-menu').html('')
+                console.log('这是一个一级菜单含二级的菜单')
+                var current_menu_title=$(this).text()
+                var $menu_tile=$('<li>')
+                $menu_tile.text(current_menu_title)
+                $menu_tile.addClass('titles1')
+                $menu_tile.addClass('titles1-a')
+                $('.title-menu').append($menu_tile)
+            }else if(title_leftmenutiles){
+                console.log('这是一个只含一级菜单的菜单')
+                $('.title-menu').html('')
+                var current_menu_title=$(this).text()
+                var $menu_tile=$('<li>')
+                $menu_tile.addClass('titles1')
+                $menu_tile.addClass('titles1-a')
+                $menu_tile.text(current_menu_title)
+                $('.title-menu').append($menu_tile)
+
+            }else {
+                console.log('这是一个二级菜单的菜单')
+                $('.titles2').remove()
+                $('.title-menu li').removeClass('titles1-a')
+                var current_menu_title=$(this).text()
+                var $menu_tile=$('<li>')
+                $menu_tile.text(current_menu_title)
+                $menu_tile.addClass('titles2')
+                $('.title-menu').append($menu_tile)
+
+            }
+             //获取data-url
+             var dataurl=$(this).attr('data-url')
+             console.log(dataurl)
+             $('.page-title').html('')
+             $('.content-main').html('')
+             $('.content-block').css({'background': 'url(/static/img/loader.white.gif) no-repeat 50% 50%','z-index':10})
+             //'Content-Type'：'application/x-www-form-urlencoded'才会填充request.POST
+            //dataType: 'JSON',//Accept就表示接口要返回给客户端的数据格式
+             console.log(JSON.stringify({"data":"test"}))
+            if(dataurl=='/monitor/') {
+                $.ajax({
+                    url: dataurl,
+                    type: 'POST',
+                    //data: JSON.stringify({"data":"test"}),
+                    data: '{"data":"text"}',
+                    headers: {'Content-Type': "application/json", "X-CSRFToken": $.cookie("csrftoken")},
+                    dataType: 'JSON',
+                    beforeSend: function () {
+                        console.log('开始执行')
+                    },
+                    complete: function () {
+                        $('.content-block').css({'background': ''})
+                        console.log('结束执行')
+                    },
+                    success: function (arg) {
+                        $('.page-title').html('')
+                        $('.content-main').html('')
+                        if (arg['status']) {
+                            $('.page-title').append('磁盘报警项总共' + arg['data_length'] + '项')
+                            $.each(arg['img'], function (i, k) {
+                                $('.content-main').append(i)
+                                $('.content-main').append(k)
+                            })
+                        } else {
+                            $('.page-title').append('连接服务器获取失败')
+                        }
+                        //$.each(arg,function (i,k) {
+                        //    if(i=="data_length"){
+                        //        $('.page-title').append('磁盘报警项总共'+k+'项')
+                        //    }else {
+                        //        $('.content-main').append(i)
+                        //        $('.content-main').append(k)
+                        //    }
+                        //})
+                    }
+                })
+            }
+            console.log(dataurl)
+            if(dataurl=='/llog/') {
+                $.ajax({
+                    url: dataurl,
+                    type: 'POST',
+                    //data: JSON.stringify({"data":"test"}),
+                    data: '{"data":"text"}',
+                    headers: {'Content-Type': "application/json", "X-CSRFToken": $.cookie("csrftoken")},
+                    dataType: 'JSON',
+                    beforeSend: function () {
+                        console.log('开始执行')
+                    },
+                    complete: function () {
+                        $('.content-block').css({'background': ''})
+                        console.log('结束执行')
+                    },
+                    success: function (arg) {
+                        $('.content-main').html(arg['data'])
+                    }
+                })
+            }
+            return false
+        })
+        $('.leftmenutiles').next().hide()
+
+        $('.leftmenutiles').click(function () {
+            if($('.leftmenutiles').next()){
+                $('.leftmenutiles').next().show()
+                $('.leftmenutile').next().not($(this).next()).hide()
+            }
+        })
+        $('.chgepass').click(function () {
+            $('.help-block-changepass').text('')
+             $.ajax({
+                url: '/changepass/',
+                type: 'POST',
+                data: $('#chgepass').serialize(),
+                dataType: 'JSON',
+                success:function (arg) {
+                    if(arg.status){
+                        location.href = "/";
+                    }else {
+                        $.each(arg.msg,function (k,v) {
+                            console.log(k,v)
+                            $('#'+k).next().text(v[0])
+                        })
+                    }
+                }
+             })
+        })
+
+        function CreateTime() {
+            var myDate = new Date();
+            year=myDate.getFullYear()
+            month=myDate.getMonth()+1
+            if(month<10){
+                month='0'+month
+            }
+            date=myDate.getDate()
+            if(date<10){
+                date='0'+date
+            }
+            hours=myDate.getHours()
+            if(hours<10){
+                hours='0'+hours
+            }
+            minutes=myDate.getMinutes()
+            if(minutes<10){
+                minutes='0'+minutes
+            }
+            seconds=myDate.getSeconds()
+            if(seconds<10){
+                seconds='0'+seconds
+            }
+            return year+'-'+month+'-'+date+' '+hours+':'+minutes+':'+seconds
+        }
+        var datetime=CreateTime()
+        $('.clock').text(datetime)
+        timesid=setInterval(function () {
+            var datetime=CreateTime()
+            $('.clock').text(datetime)
+        },1000)
+    })
+</script>
+</html>

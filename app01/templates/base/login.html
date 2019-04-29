@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>系统管理</title>
+    <link rel="icon" href="/static/img/logo-noword.png">
+    <link href="/static/bs/css/bootstrap.css" rel="stylesheet" />
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/bs/js/bootstrap.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row" style="position: relative">
+        <div style="width: 400px;height:237px;position: fixed;top:50%;left: 50%;margin-left: -200px;margin-top: -128px">
+              <div class="panel-group" id="accordion">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                      登录系统
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in">
+                  <div class="panel-body">
+                        <form id="loginfrom" class="form-horizontal" action="/" method="POST" novalidate>
+                            {% csrf_token %}
+                          <div class="form-group">
+                            <label for="username" class="col-sm-3 control-label">用户</label>
+                            <div class="col-sm-9">
+                              {{ loginform.username }}
+                              <p class="help-block"></p>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="password" class="col-sm-3 control-label">密码</label>
+                            <div class="col-sm-9">
+                              {{ loginform.password }}
+                              <p class="help-block"></p>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="code" class="col-sm-3 control-label">验证码</label>
+                            <div class="col-sm-9" style="position: relative">
+                                <div class="codeitem" style="position: relative">
+                                    {{ loginform.code }}
+                                    <img class="codeing" src="data:image/png;base64,{{ imgdata }}" style="width: 100px;height: 34px;display: inline-block;position: absolute;bottom: 0px;margin-left: 15px;cursor: pointer">
+                                </div>
+                                <p class="help-block" style="display: block"></p>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                              <button type="button" class="btn btn-default tijiao">登录</button>
+                              <button type="reset" class="btn btn-default">取消</button>
+                            </div>
+                          </div>
+                        </form>
+                  </div>
+                  <div class="panel-footer"><mark>如有问题发送邮件至tiantao@maitian.cn</mark></div>
+                </div>
+              </div>
+              </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        $('.tijiao').click(function () {
+            $('.help-block').text('')
+            $.ajax({
+                url: '/',
+                method: "POST",
+                dataType:"JSON",
+                data: $('#loginfrom').serialize(),
+                success:function (arg) {
+                    if(arg.status && arg.code){
+                        location.href = "/index/";
+                    }else {
+                        $.each(arg.msg,function (k,v) {
+                            console.log(k,v)
+                            if(k=='code'){
+                                $('#'+k).parent().next().text(v[0])
+                            }else {
+                                $('#'+k).next().text(v[0])
+                            }
+                        })
+                        $.ajax({
+                            url: '/code/',
+                            method: "POST",
+                            data: {'csrfmiddlewaretoken': "{{ csrf_token }}"},
+                            success:function (data) {
+                                $('.codeing').attr('src', 'data:image/png;base64,'+data)
+                            }
+                         })
+                    }
+                }
+             })
+        })
+        $('.codeing').click(function () {
+            $.ajax({
+                url: '/code/',
+                method: "POST",
+                data: {'csrfmiddlewaretoken': "{{ csrf_token }}"},
+                success:function (data) {
+                    $('.codeing').attr('src', 'data:image/png;base64,'+data)
+                }
+             })
+        })
+    })
+
+</script>
+</html>

@@ -1,0 +1,24 @@
+<form class="form-horizontal" novalidate id="chgepass">
+    {% csrf_token %}
+  <div class="form-group">
+    <label for="changpassword_1" class="col-sm-3 control-label">输入新密码</label>
+    <div class="col-sm-9">
+        {{ changepassform.changpassword_1 }}
+        <p class="help-block help-block-changepass">{{ changepassform.errors.changpassword_1.0 }}</p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="changpassword_2" class="col-sm-3 control-label">确认新密码</label>
+    <div class="col-sm-9">
+        {{ changepassform.changpassword_2 }}
+        <p class="help-block help-block-changepass">{{ changepassform.errors.changpassword_2.0 }}</p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3"></label>
+    <div class="col-sm-9">
+        <button type="button" class="btn btn-primary chgepass">提交</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">退出</button>
+    </div>
+  </div>
+</form>

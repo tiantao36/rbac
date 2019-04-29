@@ -1,0 +1,27 @@
+<ul style="margin: 0px;padding: 0px;height: 586px;position: relative" class="menu-ul">
+    <li style="display: inline-block;width: 180px" class="menu-li">
+        <a class="leftmenutiles leftmenutile" style="display: inline-block;width: 180px;height: 40px;line-height: 40px;color: #fff" data-url="/echart/"><span style="padding-left: 40px"><img src="/static/img/icon_work_fill.png" style="height: 16px;width: 16px"><span style="display: inline-block;padding-left: 5px">仪表图盘</span></span></a>
+    </li>
+    {% for k,item in page_menu.items %}
+        <li style="display: inline-block;width: 180px" class="menu-li">
+            <a class="leftmenutiles leftmenutile" style="display: inline-block;width: 180px;height: 40px;line-height: 40px;color: #fff" data-url="{{ item.url }}"><span style="padding-left: 40px"><img src="/static/img/{{ item.imgurl }}" style="height: 16px;width: 16px"><span style="display: inline-block;padding-left: 5px">{{ item.title }}</span></span></a>
+            {% if item.children  %}
+                <ul style="margin: 0px;padding: 0px;width: 180px" class="leftmenutile-menu">
+                    {% for v in item.children %}
+                         <li style="display: inline-block;width: 180px;height: 40px;line-height: 40px;color: #fff">
+                             <a class="leftmenutile" style="display: inline-block;width: 180px;height: 40px;line-height: 40px;color: #fff" data-url="{{ v.url }}" class="command" id="envset-command"><span style="display: inline-block;padding-left: 60px">{{ v.title }}</span></a>
+                         </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+    {% endfor %}
+    <li style="display: inline-block;width: 180px;position: absolute;bottom: 30px;" class="menu-li">
+        <a class="disabled" style="display: inline-block;width: 180px;height: 40px;line-height: 40px;color: #fff" href="javascript:;">
+            <span style="padding-left: 15px">
+            <span style="display: inline-block;padding-left: 5px" class="clock"></span>
+            </span>
+        </a>
+    </li>
+</ul>
+</ul>
